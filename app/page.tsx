@@ -7,9 +7,6 @@ import StaffDashboard from '@/app/components/StaffDashboard';
 import { Toaster } from '@/app/components/ui/sonner';
 import supabase from './lib/client';
 
-/* ======================
-   INTERFACES (MATCH DB)
-====================== */
 
 export interface User {
   email: string;
@@ -20,13 +17,9 @@ export interface StationeryItem {
   id: string;
   name: string;
   category: 'OP Stock' | 'OP Non-Stock';
-
-  /** STOCK */
   totalStock: number;
   availableStock: number;
   unit: string;
-
-  /** OPTIONAL (NON OP-STOCK) */
   brand?: string | null;
   unitPrice?: number | null;
 }
@@ -53,19 +46,12 @@ export interface MissingReport {
   date: string;
 }
 
-/* ======================
-   APP COMPONENT
-====================== */
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [stationeryItems, setStationeryItems] = useState<StationeryItem[]>([]);
   const [retrievalsOrders, setRetrievalsOrders] = useState<RetrievalOrder[]>([]);
   const [missingReports, setMissingReports] = useState<MissingReport[]>([]);
-
-  /* ======================
-     STATIONERY
-  ====================== */
 
   const handleAddStationeryItem = async (
     item: Omit<StationeryItem, 'id'>
@@ -83,8 +69,6 @@ export default function App() {
         total_stock: item.totalStock,
         available_stock: item.availableStock,
         unit: item.unit,
-
-        // OPTIONAL
         brand: item.brand ?? null,
         unit_price: item.unitPrice ?? null,
       });
@@ -141,8 +125,6 @@ export default function App() {
       totalStock: item.total_stock,
       availableStock: item.available_stock,
       unit: item.unit,
-
-      // OPTIONAL
       brand: item.brand,
       unitPrice: item.unit_price,
     }));
@@ -150,9 +132,6 @@ export default function App() {
     setStationeryItems(items);
   };
 
-  /* ======================
-     ORDERS
-  ====================== */
 
   const fetchOrders = async () => {
     const { data, error } = await supabase
@@ -177,10 +156,6 @@ export default function App() {
     setRetrievalsOrders(orders);
   };
 
-  /* ======================
-     MISSING REPORTS
-  ====================== */
-
   const fetchMissingReports = async () => {
     const { data, error } = await supabase
       .from('missing_reports')
@@ -202,10 +177,6 @@ export default function App() {
     setMissingReports(reports);
   };
 
-  /* ======================
-     INITIAL LOAD
-  ====================== */
-
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -222,9 +193,6 @@ export default function App() {
     loadInitialData();
   }, []);
 
-  /* ======================
-     ACTION HANDLERS
-  ====================== */
 
   const handleLogin = (user: User) => setUser(user);
   const handleLogout = () => setUser(null);
@@ -279,9 +247,6 @@ export default function App() {
     await fetchStationery();
   };
 
-  /* ======================
-     RENDER
-  ====================== */
 
   if (!user) {
     return (
